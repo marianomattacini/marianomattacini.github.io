@@ -45,9 +45,8 @@ Me interesa el desarrollo backend, la automatización de procesos y el trabajo c
 
 ## 📂 Estructura del proyecto
 
-.
-├── index.html # Sitio completo (HTML + CSS + JS en un solo archivo)
-└── README.md # Este archivo
+- **`index.html`** → Sitio completo (HTML + CSS + JS en un solo archivo)
+- **`README.md`** → Documentación del repositorio
 
 
 ---
@@ -55,7 +54,6 @@ Me interesa el desarrollo backend, la automatización de procesos y el trabajo c
 ## 📬 Contacto
 
 - **Email:** [marianomattacini@gmail.com](mailto:marianomattacini@gmail.com)
-- **Email:** [mariano.mattacini@osep.mendoza.gov.ar](mailto:marianomattacini@osep.mendoza.gov.ar)
 - **WhatsApp:** [+54 9 261 372 7750](https://wa.me/5492613727750)
 - **Instagram:** [@marianomattacini](https://instagram.com/marianomattacini)
 - **GitHub:** [github.com/marianomattacini](https://github.com/marianomattacini)
