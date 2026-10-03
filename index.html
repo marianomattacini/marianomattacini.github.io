@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+﻿﻿<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -23,16 +23,28 @@
     html { scroll-behavior: smooth; }
     body {
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background: var(--bg);
       color: var(--text);
       line-height: 1.6;
       overflow-x: hidden;
+      background: transparent;
     }
     a { color: var(--accent); text-decoration: none; transition: .3s; }
     a:hover { color: var(--accent-2); }
     img { max-width: 100%; display: block; }
-    section { padding: 90px 20px; }
+    section { padding: 90px 20px; position: relative; z-index: 1; }
     .container { max-width: 1100px; margin: 0 auto; }
+
+    /* ====== FONDO: CONSTELACIÓN NEURONAL ====== */
+    #fondo-constelacion {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.85;
+    }
 
     /* ====== HEADER / NAV ====== */
     header {
@@ -59,8 +71,8 @@
     .hero {
       min-height: 90vh;
       display: flex; align-items: center;
-      background: radial-gradient(circle at 20% 20%, rgba(56,189,248,.15), transparent 40%),
-                  radial-gradient(circle at 80% 80%, rgba(129,140,248,.15), transparent 40%);
+      background: radial-gradient(circle at 20% 20%, rgba(56,189,248,.08), transparent 40%),
+                  radial-gradient(circle at 80% 80%, rgba(129,140,248,.08), transparent 40%);
     }
     .hero-content { display: grid; grid-template-columns: 1.3fr 1fr; gap: 60px; align-items: center; }
     .badge {
@@ -122,7 +134,7 @@
     }
 
     /* ====== SKILLS ====== */
-    #skills { background: var(--bg-alt); }
+    #skills { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); }
     .skills-grid {
       display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
       gap: 22px;
@@ -180,8 +192,10 @@
 
     /* ====== FOOTER ====== */
     footer {
-      background: var(--bg-alt); border-top: 1px solid var(--border);
+      background: rgba(30, 41, 59, 0.9); backdrop-filter: blur(10px);
+      border-top: 1px solid var(--border);
       padding: 60px 20px 30px;
+      position: relative; z-index: 1;
     }
     .footer-grid {
       max-width: 1100px; margin: 0 auto;
@@ -233,6 +247,9 @@
     gtag('config', 'G-G37XPN2MLQ');
   </script>
 <body>
+
+  <!-- Fondo: Constelación Neuronal -->
+  <canvas id="fondo-constelacion"></canvas>
 
   <!-- ============ HEADER ============ -->
   <header>
@@ -383,7 +400,6 @@
       </div>
 
       <div class="projects-grid">
-        <!-- ⬇️ NUEVO PROYECTO AGREGADO (primero para destacarlo) ⬇️ -->
         <article class="project-card reveal">
           <div class="project-thumb">
             <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" alt="Node.js">
@@ -404,7 +420,6 @@
             <a href="https://github.com/marianomattacini/ProyectoGemAdvanced" target="_blank" rel="noopener" class="btn btn-outline" style="margin-top:16px; width:100%; padding:10px 20px; font-size:.85rem;">📁 Ver código en GitHub</a>
           </div>
         </article>
-        <!-- ⬆️ FIN NUEVO PROYECTO ⬆️ -->
 
         <article class="project-card reveal">
           <div class="project-thumb">
@@ -542,6 +557,95 @@
         }
       });
     });
+
+    // ====== FONDO: CONSTELACIÓN NEURONAL ======
+    (function() {
+      const canvas = document.getElementById('fondo-constelacion');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let w, h;
+
+      function resize() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      const NUM = 70;
+      const estrellas = [];
+
+      for (let i = 0; i < NUM; i++) {
+        estrellas.push({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          tam: 0.5 + Math.random() * 2,
+          brillo: Math.random(),
+          velocidadBrillo: 0.005 + Math.random() * 0.02,
+          color: Math.random() > 0.7 ? '167, 139, 250' : '56, 189, 248',
+        });
+      }
+
+      function draw() {
+        // Fondo con gradiente nocturno
+        const grad = ctx.createLinearGradient(0, 0, 0, h);
+        grad.addColorStop(0, '#050810');
+        grad.addColorStop(0.5, '#0a1224');
+        grad.addColorStop(1, '#050810');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, w, h);
+
+        // Actualizar brillos
+        estrellas.forEach(e => {
+          e.brillo += e.velocidadBrillo;
+          if (e.brillo > 1 || e.brillo < 0) e.velocidadBrillo *= -1;
+          e.brillo = Math.max(0.2, Math.min(1, e.brillo));
+        });
+
+        // Conexiones
+        for (let i = 0; i < estrellas.length; i++) {
+          for (let j = i + 1; j < estrellas.length; j++) {
+            const dx = estrellas[i].x - estrellas[j].x;
+            const dy = estrellas[i].y - estrellas[j].y;
+            const d = Math.sqrt(dx * dx + dy * dy);
+            if (d < 130) {
+              const alpha = (1 - d / 130) * 0.25 * Math.min(estrellas[i].brillo, estrellas[j].brillo);
+              ctx.strokeStyle = `rgba(56, 189, 248, ${alpha})`;
+              ctx.lineWidth = 0.5;
+              ctx.beginPath();
+              ctx.moveTo(estrellas[i].x, estrellas[i].y);
+              ctx.lineTo(estrellas[j].x, estrellas[j].y);
+              ctx.stroke();
+            }
+          }
+        }
+
+        // Estrellas
+        estrellas.forEach(e => {
+          const r = e.tam * (0.7 + e.brillo * 0.5);
+          const alpha = e.brillo;
+
+          // Halo suave
+          const grad = ctx.createRadialGradient(e.x, e.y, 0, e.x, e.y, r * 5);
+          grad.addColorStop(0, `rgba(${e.color}, ${alpha * 0.8})`);
+          grad.addColorStop(0.4, `rgba(${e.color}, ${alpha * 0.15})`);
+          grad.addColorStop(1, `rgba(${e.color}, 0)`);
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(e.x, e.y, r * 5, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Punto central
+          ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+          ctx.beginPath();
+          ctx.arc(e.x, e.y, r, 0, Math.PI * 2);
+          ctx.fill();
+        });
+
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
   </script>
 
 </body>
